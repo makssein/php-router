@@ -8,6 +8,8 @@ class RouteDispatcher
     private string $requestURI = '/';
 
     private array $paramMap = [];
+
+    private array $paramRequestMap = [];
     private RouteConfiguration $routeConfig;
 
     /**
@@ -56,17 +58,16 @@ class RouteDispatcher
         $requestURIArray = explode('/', $this->requestURI);
 
         foreach ($this->paramMap as $key=>$value) {
-            if(isset($requestURIArray[$key])) {
+            if(!isset($requestURIArray[$key])) {
                 return;
             }
 
+            $this->paramRequestMap[$value] = $requestURIArray[$key];
             $requestURIArray[$key] = '{.*}';
         }
 
         $this->requestURI = implode('/', $requestURIArray);
         $this->prepareRegex();
-
-        var_dump($this->requestURI);
     }
 
     private function prepareRegex() {
@@ -82,7 +83,7 @@ class RouteDispatcher
     public function render() {
         $class = $this->routeConfig->controller;
         $action = $this->routeConfig->action;
-        (new $class)->$action();
+        (new $class)->$action(...$this->paramRequestMap);
 
         die();
     }

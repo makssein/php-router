@@ -20,11 +20,4 @@ class RouteConfiguration {
 
         return $this;
     }
-
-    public function middleware(string $midslleware) : self {
-        $this->middleware = $midslleware;
-
-        return $this;
-    }
-
 }
